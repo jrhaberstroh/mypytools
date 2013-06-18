@@ -1,0 +1,1 @@
+DBAddData: A sqlite3 wrapper module to add data and query columns. Uses reasonably safe string manipulation protocols to prevent malicious/accidental "; DROP TABLE ;" sorts of inputs.
