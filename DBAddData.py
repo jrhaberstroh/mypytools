@@ -69,10 +69,10 @@ def AddToDB(**kwargs):
 	Pass required kwargs & corresponding data, as specified by PrintDBCols(), as key::value pairs.
 	Because sqlite is vulnerable to certaint strings, this function generates the sqlite command in a mostly secure way:
 	1) It checks that all keys passed to it are present in the database before trying to put them in, and raises a ValueError if there is a mismatch
-	2) It puts data into the arguments through the c.evaluate() function [http://docs.python.org/2/library/sqlite3.html]
+	2) It puts data into the arguments through the c.execute() function [http://docs.python.org/2/library/sqlite3.html]
 
 	It can raise any excpetions that sqlite3 can raise.
-	It has no return.
+	It returns the command to SQL and the argument list passed to c.execute().
 	"""
 
 	all_cols = GetDBCols()[0];
@@ -93,13 +93,13 @@ def AddToDB(**kwargs):
 	c = conn.cursor()
 	command = ("INSERT INTO " + table_name + "(" + str_db_args + ") "
 			'VALUES ('+str_qmarks+');' )
-	print command
-	print arg_list
+	#print command
+	#print arg_list
 	c.execute(command, arg_list)
-	print c.fetchone()
+	#print c.fetchone()
 	conn.commit()
 	conn.close() 
-	
+	return [command, arg_list]
 
 
 
