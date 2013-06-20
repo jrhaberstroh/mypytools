@@ -14,7 +14,7 @@ Variable db_path: sets the path to the desired database.
 Variable table_name: sets the name of the table to be modified in the database.
 
 Call PrintDBCols() to get a list of the columns names in the table & indexes, sorted by whether or not they are required fields.
-GetDBCols() is available to avoid typographical errors.
+GetCols() is available to avoid typographical errors.
 AddToDB(**kwargs) is the function to add data to the database.
 """
 
@@ -54,15 +54,15 @@ def GetCols():
 def PrintCols():
 	"""
 	Prints the database columns in a user friendly way, and specifies which entries are required vs optional.
-	Also presents the user with the indexes for better using GetDBCols().
+	Also presents the user with the indexes for better using GetCols().
 	"""
 	CheckTable()
 
 	print "PrintDBCols():"
-	print "NOTE: Call GetDBCols to get the raw data."
+	print "NOTE: Call GetCols to get the raw data."
 	print "The first number on each line is the index number for that column."
 	print 
-	cols = GetDBCols()
+	cols = GetCols()
 	print ".........Required Arguments:"
 	for ind,col in enumerate(cols[0]):
 		if (cols[2][ind] == None):
@@ -88,7 +88,7 @@ def AddData(**kwargs):
 	"""
 	CheckTable()
 
-	all_cols = GetDBCols()[0];
+	all_cols = GetCols()[0];
 	db_args = []
 	arg_list = []
 	for key, val in kwargs.iteritems():
@@ -129,7 +129,7 @@ def ReadData(*args, **kwargs):
 	"""
 	CheckTable()
 
-	all_cols = GetDBCols()[0];
+	all_cols = GetCols()[0];
 	#all_cols = ['Col1', 'shoebox']
 	for arg_col in args:
 		if not any(col == arg_col for col in all_cols):
