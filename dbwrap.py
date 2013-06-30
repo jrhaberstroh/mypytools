@@ -36,10 +36,10 @@ def GetCols():
 
 	#arg = table_name,
 	conn = sqlite3.connect(db_path)
-	c = conn.cursor()
-	x = c.execute('PRAGMA table_info('+table_name+')')
-	query = c.fetchall()
-	conn.close()
+	with conn:
+		c = conn.cursor()
+		x = c.execute('PRAGMA table_info('+table_name+')')
+		query = c.fetchall()
 
 	cols = []
 	types = []
@@ -103,15 +103,14 @@ def AddData(**kwargs):
 	str_qmarks  = ",".join( ['?'] * len(db_args) )
 
 	conn = sqlite3.connect(db_path)
-	c = conn.cursor()
-	command = ("INSERT INTO " + table_name + "(" + str_db_args + ") "
-			'VALUES ('+str_qmarks+');' )
+	with conn:
+		c = conn.cursor()
+		command = ("INSERT INTO " + table_name + "(" + str_db_args + ") "
+			   'VALUES ('+str_qmarks+');' )
 	#print command
 	#print arg_list
-	c.execute(command, arg_list)
+		c.execute(command, arg_list)
 	#print c.fetchone()
-	conn.commit()
-	conn.close() 
 	return [command, arg_list]
 
 
@@ -160,10 +159,10 @@ def ReadData(*args, **kwargs):
 	print constraints_val_list
 
 	conn = sqlite3.connect(db_path)
-	c = conn.cursor()
-	x = c.execute(command, constraints_val_list)
-	query = c.fetchall()
-	conn.close()
+	with conn:
+		c = conn.cursor()
+		x = c.execute(command, constraints_val_list)
+		query = c.fetchall()
 	return query
 
 
