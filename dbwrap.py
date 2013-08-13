@@ -51,6 +51,8 @@ def GetCols():
 
 	return [cols, types, req]
 
+
+
 def PrintCols():
 	"""
 	Prints the database columns in a user friendly way, and specifies which entries are required vs optional.
