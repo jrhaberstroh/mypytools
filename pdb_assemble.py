@@ -30,12 +30,19 @@ def FindRotTrans(mtx_pos, fname):
 			#	print line,
 	return None,None
 		
+def PrintHeader(fname):
+	with open(fname) as input_file:
+		for i, line in enumerate(input_file):
+			pre = line[0:6].strip()
+			if (pre != "ATOM" and pre != "HETATM" and pre!= "TER" and pre!= "MASTER" and pre != "END"):
+				print line,
 
 #def RotateAtoms(mtx, fname):
 #	with open(fname) as input_file:
 
 
 
+PrintHeader(args.pdb_base)
 mtxremain = True
 mtxcounter = 0
 while mtxremain:
@@ -43,21 +50,43 @@ while mtxremain:
 	if m_mtx == None:
 		mtxremain=False
 		break
-	print m_mtx
-	print m_trans
 	mtxcounter += 1
 
 	with open(args.pdb_base) as input_file:
+		#prev_atm = 0
+
 		for i, line in enumerate(input_file):
 			pre = line[0:6].strip()
 			if (pre == "ATOM"):
+				subcount = int(line[5:11].strip())
 				pos = np.matrix(map(float,(line.split())[6:9])).transpose()
 				out = (m_mtx * pos) + m_trans
-				print line[0:31], "{:6.6g}".format(out[0,0]),"{:6.6g}".format(out[1,0]),"{:6.6g}".format(out[2,0]), line[56:],
+				#print line[0:4],
+				#print subcount,
+				#print line[11:31], 
+				print line[0:31],
+				for i in xrange(0,3):
+					if out[i,0] <= -100:
+						print "{:5.2f}".format(out[i,0]),
+					elif out[i,0] <= -10: 
+						print "{:6.3f}".format(out[i,0]),
+					elif out[i,0] < 0: 
+						print " {:6.3f}".format(out[i,0]),
+					elif out[i,0] >= 100:
+						print " {:5.2f}".format(out[i,0]),
+					elif out[i,0] >= 10: 
+						print " {:6.3f}".format(out[i,0]),
+					elif out[i,0] >= 0: 
+						print " {:6.3f}".format(out[i,0]),
+					else:
+						print "ERROR"
+				print line[56:],
 				
-			#if (pre == "HETATM"):
-			#	print line,
+			if (pre == "TER"):
+				print line,
 
-
-	if mtxcounter == 2:
+	if mtxcounter == 1:
 		mtxremain = False
+
+
+print "END"
