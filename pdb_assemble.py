@@ -45,6 +45,7 @@ def PrintHeader(fname):
 PrintHeader(args.pdb_base)
 mtxremain = True
 mtxcounter = 0
+last_atom = 0
 while mtxremain:
 	m_mtx,m_trans = FindRotTrans(mtxcounter, args.pdb_base)
 	if m_mtx == None:
@@ -53,18 +54,16 @@ while mtxremain:
 	mtxcounter += 1
 
 	with open(args.pdb_base) as input_file:
-		#prev_atm = 0
-
 		for i, line in enumerate(input_file):
 			pre = line[0:6].strip()
 			if (pre == "ATOM"):
 				subcount = int(line[5:11].strip())
 				pos = np.matrix(map(float,(line.split())[6:9])).transpose()
 				out = (m_mtx * pos) + m_trans
-				#print line[0:4],
-				#print subcount,
-				#print line[11:31], 
-				print line[0:29],
+				print line[0:4],
+				print "{:05d}".format(last_atom+subcount),
+				print line[12:29], 
+				#print line[0:29],
 				for i in xrange(0,3):
 					if out[i,0] <= -100:
 						print "{:5.2f}".format(out[i,0]),
@@ -83,9 +82,12 @@ while mtxremain:
 				print line[56:],
 				
 			if (pre == "TER"):
+				subcount = int(line[5:11].strip())
 				print line,
 
-	if mtxcounter == 1:
+	last_atom += subcount
+
+	if mtxcounter == 2:
 		mtxremain = False
 
 
