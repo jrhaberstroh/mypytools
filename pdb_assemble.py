@@ -64,7 +64,7 @@ while mtxremain:
 				#print line[0:4],
 				#print subcount,
 				#print line[11:31], 
-				print line[0:31],
+				print line[0:29],
 				for i in xrange(0,3):
 					if out[i,0] <= -100:
 						print "{:5.2f}".format(out[i,0]),
