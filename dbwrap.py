@@ -19,13 +19,16 @@ table_name = None
 
 
 def CheckTable():
+	"""
+	Checks that db_path and table_name are both set to a value other than None. Should do more checking, but it doesn't.
+	"""
 	if db_path == None or table_name == None:
-		print "You must set BOTH the table_name and the db_path namespace variables to run Read()!"
+		print "You must set BOTH the table_name and the db_path variables in the dbwrap namespace to use this module."
 		raise ValueError
 
 def GetCols():
 	"""
-	Reads the database table (table_name) from db_path and returns a list:
+	Read the database table (table_name) from db_path and get a list:
 		0) Column names (unicode)
 		1) Column types (unicode)
 		2) Column defaults (unicode)
@@ -80,6 +83,15 @@ def AddData(**kwargs):
 	"""
 	Setup local variables db_path and table_name first.
 	Pass required kwargs & corresponding data, as specified by PrintDBCols(), as key::value pairs.
+
+	======================================
+
+	Example:
+	value = {'flightid':line[0], 'time':line[1], 'lat':line[5], 'long':line[6]}
+	dbwrap.AddData(**value)
+	
+	======================================
+
 	Because sqlite is vulnerable to certaint strings, this function generates the sqlite command in a mostly secure way:
 	1) It checks that all keys passed to it are present in the database before trying to put them in, and raises a ValueError if there is a mismatch
 	2) It puts data into the arguments through the c.execute() function [http://docs.python.org/2/library/sqlite3.html]
@@ -119,6 +131,18 @@ def AddData(**kwargs):
 def ReadData(*args, **kwargs):
 	"""
 	Calls, schematically speaking, 'SELECT *args FROM table_name WHERE **kwargs'
+
+	======================================
+
+	Example:
+	x = dbwrap.ReadData("lat", "long", flightid = 6321892)
+	print "x = ",
+	print x
+	>> SELECT (lat, long) FROM table_name WHERE flightid = 6321892
+	>> x =  [(30.3500003814697, -94.0800018310547), (30.3500003814697, -94.0800018310547)]
+	
+	======================================
+
 	Pass *args for the desired columns.
 	Pass **kwargs to specify WHERE options, in the simple format 'key == value'. Value can be a tuple, in which case an "or" is placed between tuple options.
 
@@ -128,7 +152,6 @@ def ReadData(*args, **kwargs):
 
 	Note that table_name is still insecure.
 	"""
-	CheckTable()
 
 	all_cols = GetCols()[0];
 	#all_cols = ['Col1', 'shoebox']
@@ -136,7 +159,7 @@ def ReadData(*args, **kwargs):
 		if not any(col == arg_col for col in all_cols):
 			print "Column "+arg_col+" supplied by *args not valid"
 			raise ValueError
-	column_str = ', '.join(args)
+	column_str = ", ".join(args)
 	
 	constraints_and = []
 	constraints_val_list = []
