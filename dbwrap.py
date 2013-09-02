@@ -190,7 +190,17 @@ def ReadData(*args, **kwargs):
 		query = c.fetchall()
 	return query
 
+def RawSqlite3(command):
+	"""
+	Runs a raw sqlite3 command, with no checking.
+	"""
+	CheckTable()
 
+	with sqlite3.connect(db_path) as conn:
+		c = conn.cursor()
+		x = c.execute(command)
+		query = c.fetchall()
+	return query
 
 def test():
 	## test requires a test database...
