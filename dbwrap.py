@@ -1,22 +1,22 @@
 #!/usr/bin/env python2.7
+""" Module dbwrap:
+	Merger of DBAddData and DBReadData
+
+A light wrapper for adding data to a sqlite database using python dicts.
+Variable db_path: sets the path to the desired database.
+Variable table_name: sets the name of the table to be modified in the database.
+		
+Call PrintDBCols() to get a list of the columns names in the table & indexes, sorted by whether or not they are required fields.
+GetCols() is available to avoid typographical errors.
+AddToDB(**kwargs) is the function to add data to the database.
+"""
+
 import sqlite3
 import os
 
 db_path = None
 table_name = None
 
-"""
-Module dbwrap:
-	Merger of DBAddData and DBReadData
-
-A light wrapper for adding data to a sqlite database using python dicts.
-Variable db_path: sets the path to the desired database.
-Variable table_name: sets the name of the table to be modified in the database.
-
-Call PrintDBCols() to get a list of the columns names in the table & indexes, sorted by whether or not they are required fields.
-GetCols() is available to avoid typographical errors.
-AddToDB(**kwargs) is the function to add data to the database.
-"""
 
 def CheckTable():
 	if db_path == None or table_name == None:
@@ -135,7 +135,7 @@ def ReadData(*args, **kwargs):
 	#all_cols = ['Col1', 'shoebox']
 	for arg_col in args:
 		if not any(col == arg_col for col in all_cols):
-			print "Column "+arc_col+" supplied by *args not valid"
+			print "Column "+arg_col+" supplied by *args not valid"
 			raise ValueError
 	column_str = ', '.join(args)
 	
