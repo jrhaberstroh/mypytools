@@ -127,6 +127,61 @@ def AddData(**kwargs):
 	#print c.fetchone()
 	return [command, arg_list]
 
+def AddData_Multi(kwarg_list):
+	"""
+	Setup local variables db_path and table_name first.
+	Pass required kwargs & corresponding data, as specified by PrintDBCols(), as key::value pairs.
+
+	======================================
+
+	Example:
+	kwarg_list = ()
+	for line in file:
+		value = {'flightid':line[0], 'time':line[1], 'lat':line[5], 'long':line[6]}
+		kwarg_list.append(value)
+	dbwrap.AddData_multi(kwarg_list)
+	
+	======================================
+
+	Because sqlite is vulnerable to certaint strings, this function generates the sqlite command in a mostly secure way:
+	1) It checks that all keys passed to it are present in the database before trying to put them in, and raises a ValueError if there is a mismatch
+	2) It puts data into the arguments through the c.execute() function [http://docs.python.org/2/library/sqlite3.html]
+	3) table_name not checked for security
+
+	It can raise any excpetions that sqlite3 can raise.
+	It returns the command to SQL and the argument list passed to c.execute().
+	
+	Items are written iteratively and exception-handled; if one item in the middle is malformed, it does not affect the entries before it or after it.
+	"""
+	CheckTable()
+
+	count = 0
+	all_cols = GetCols()[0];
+	with sqlite3.connect(db_path) as conn:
+		c = conn.cursor()
+		for kwargs in kwarg_list:
+			count = count + 1
+			try:
+				db_args = []
+				arg_list = []
+				for key, val in kwargs.iteritems():
+					if any(col == key for col in all_cols):
+						db_args.append(key)
+						arg_list.append(val)
+					else:
+						print 'AddToResultDB(**kwargs): ERROR: Key "'+key+'" was present in **kwargs. "'+key+'" is not a valid column name'
+						print 
+						raise ValueError
+				str_db_args = ", ".join(db_args)
+				str_qmarks  = ",".join( ['?'] * len(db_args) )
+	
+				command = ("INSERT INTO " + table_name + "(" + str_db_args + ") "
+			   			'VALUES ('+str_qmarks+');' )
+				c.execute(command, arg_list)
+			except ValueError:
+				print "Skipping entry "+str(count)+" due to bad kwarg."
+
+	return [command, arg_list]
 
 def ReadData(*args, **kwargs):
 	"""
