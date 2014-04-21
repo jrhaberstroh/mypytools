@@ -6,9 +6,15 @@ A light wrapper for adding data to a sqlite database using python dicts.
 Variable db_path: sets the path to the desired database.
 Variable table_name: sets the name of the table to be modified in the database.
 		
-Call PrintDBCols() to get a list of the columns names in the table & indexes, sorted by whether or not they are required fields.
-GetCols() is available to avoid typographical errors.
-AddToDB(**kwargs) is the function to add data to the database.
+Call PrintCols() to get a list of the columns names in the table & indexes, sorted by whether or not they are required fields.
+GetCols() formats the output in a 2D array to assist with avoiding typographical errors.
+
+R/W Functions
+===================
+AddData(**kwargs) is the function to add data to the database.
+AddData_Multi(**kwargs)
+ReadData(**kwargs)
+RawSqlite3(string)
 """
 
 import sqlite3
@@ -137,7 +143,7 @@ def AddData_Multi(kwarg_list):
 	Example:
 	kwarg_list = ()
 	for line in file:
-		value = {'flightid':line[0], 'time':line[1], 'lat':line[5], 'long':line[6]}
+		value = { 'flightid':line[0], 'time':line[1], 'lat':line[5], 'long':line[6] }
 		kwarg_list.append(value)
 	dbwrap.AddData_multi(kwarg_list)
 	
